@@ -1,0 +1,11 @@
+module- to import libraries (root module-app module)
+component-to create view{html,css,ts}-(root component-app component)
+data binding-share data inside component
+one way binding-  data sharing only in one direction at a time
+   1.component (ts) to view (html)
+      string interpolation - {{expression}}
+      property bindind - [attribute name]="property name"
+   2.view(html) to component(ts)
+      event binding - (event-name)="function name()"
+      event binding using $event - (event-name)="function name($event)"
+      using Template referencing variable - #variable-name

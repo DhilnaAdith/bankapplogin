@@ -1,0 +1,12 @@
+Angular front end technology
+
+ basic commands
+
+ 1. to create project - ng new projectName/
+ 2. to run angular project - ng serve/ng serve --open
+ 3. to generate component - ng g c component name
+
+ building blocks
+
+ 1. module - to import libraries (root module-app module)
+ 2. component - to create view{ html,css,ts,testing nu vendiyu;la filum}
