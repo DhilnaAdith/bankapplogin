@@ -24,25 +24,30 @@ registerForm = this.fb.group({
 
   ngOnInit(): void {
   }
-  register()
-  {
-    if(this.registerForm.get('uname')?.errors){
-      console.log('invalid username');
-    }
+  register() {
     var uname=this.registerForm.value.uname
     var acno=this.registerForm.value.acno
     var pswd=this.registerForm.value.pswd
-    //call register in data service
-    const result = this.ds.register(acno,pswd,uname)
-    if(result)
-    {
-      alert("successfully register")
+    
+    if(this.registerForm.valid){
+   //call register in data service -asynchronous
+    this.ds.register(acno,pswd,uname)
+    .subscribe((result:any)=>{
+      if(result){
+      alert(result.message)
       this.router.navigateByUrl("")
     }
-    else{
-      alert('user already exist.. please log in')
-      this.router.navigateByUrl("")
-    }
+   },
+  result=>{
+    alert(result.error.message)
+    this.router.navigateByUrl("")
   }
-
+  )
 }
+    else{
+      alert('invalid form')
+      
+    }
+    }
+
+  }
