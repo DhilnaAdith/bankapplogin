@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core"
 import { FormBuilder, Validators } from "@angular/forms"
 import { Router, RouterPreloader } from "@angular/router"
+import { subscribeOn } from "rxjs"
 import { DataService } from "../services/data.service"
 
 @Component({
@@ -21,9 +22,7 @@ export class LoginComponent implements OnInit {
  acno=""
  //to hold user password number
  pswd=""
-  
-
- //login - model
+  //login - model
 loginForm = this.fb.group({
   
   acno:['',[Validators.required,Validators.pattern('[0-9]*')]],
@@ -44,27 +43,27 @@ constructor(private fb:FormBuilder,private router:Router,private ds:DataService)
 
 
 // login()
-login()
-{
+login(){
  var acno = this.loginForm.value.acno
  var pswd = this.loginForm.value.pswd
-if(this.loginForm.valid)
-{
-  //calling login data service
- const result =this.ds.login(acno,pswd)
-
- if(result)
- {
-  
-alert('login sucessful')
-this.router.navigateByUrl('dashboard')
+if(this.loginForm.valid){
+  //calling login data service - asynchrous
+  this.ds.login(acno,pswd)
+  .subscribe(
+    (result:any)=>{
+    alert(result.message)
+    this.router.navigateByUrl("dashboard")
+  },
+ result=>{
+  alert(result.error.message)
+ }
+ )
   }
+ else{
+  alert('Invalid Form')
 }
-else{
-  alert('invalid Form')
-}
- 
- 
-}
+ }
 }
 
+
+ 
