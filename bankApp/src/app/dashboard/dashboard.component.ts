@@ -30,55 +30,60 @@ withdrawForm = this.fb.group({
 acno:any
 lDate:any
 
+constructor( private fb:FormBuilder, private ds:DataService, private router:Router){
+  //fetch username from localstorage
+  if(localStorage.getItem('currentUsername')){
+this.user=JSON.parse(localStorage.getItem('currentUsername') || '')
+  }
 
-  constructor( private fb:FormBuilder,private ds:DataService,private router:Router)
-   { 
-this.user=this.ds.currentUsername
+  
 this.lDate= new Date()
   }
 
   ngOnInit(): void {
-    if(!localStorage.getItem('currentAcno'))
-    {
+    if(!localStorage.getItem('token')){
       alert('pls login')
       this.router.navigateByUrl('')
+   }
+ }
 
-    }
-  }
-deposit()
-{
-  var acno= this.depositForm.value.acno
+deposit(){
+ var acno= this.depositForm.value.acno
   var pswd= this.depositForm.value.pswd
   var amount= this.depositForm.value.amount
-if(this.depositForm.valid)
-{
-  const result =this.ds.deposit(acno,pswd,amount)
+if(this.depositForm.valid){
+  //deposit data service - asynchronous
+  this.ds.deposit(acno,pswd,amount)
+.subscribe(
+  (result:any)=>{
+    alert(result.message)
+  },
 
-
-  if(result)
-  {
-    alert('${amount}credited depositted successfully and new balance is  ${result}')
-  }
+result=>{
+  alert(result.error.message)
+})
 }
- 
-else{
-  alert('invalidForm')
+ else{
+  alert('InvalidForm')
 }
 }
-withdraw()
-{
+withdraw(){
   var acno= this.withdrawForm.value.acno
   var pswd= this.withdrawForm.value.pswd
   var amount= this.withdrawForm.value.amount
-  if(this.withdrawForm.valid)
-  {
-    const result =this.ds.withdraw(acno,pswd,amount)
-
-   if(result)
-  {
-alert(`${amount} debited success fully and new balance is ${result} `)
-  }
-  }
+  if(this.withdrawForm.valid) {
+    //asynchronous function call
+    this.ds.withdraw(acno,pswd,amount)
+    .subscribe(
+      //200
+      (result:any)=>{
+        alert(result.message)
+      },
+    //400
+    result=>{
+      alert(result.error.message)
+    })
+     }
   else{
     alert('Invalid Form')
   }
@@ -89,22 +94,36 @@ alert(`${amount} debited success fully and new balance is ${result} `)
     //remove login.acno.username
     localStorage.removeItem('currentAcno')
     localStorage.removeItem('currentUsername')
+    localStorage.removeItem('token')
+    
     //navigate to login page
     this.router.navigateByUrl('')
   }
   //deleteparent()
-  deleteParent()
-  {
-    this.acno = JSON.parse(localStorage.getItem('currentAcno') ||"")
+  deleteParent(){
+    this.acno = JSON.parse(localStorage.getItem('currentAcno') || '')
   }
 
   //cancel() - to set acno as empty
-cancel()
-{
+cancel(){
   this.acno=""
 }
+//ondelete($event)
+onDelete(event:any){
+//asynchronous call
+ this.ds.delete(event)
+ .subscribe(
+  (result:any)=>{
+    alert(result.message)
+     //navigate to login page
+     this.router.navigateByUrl('')
+     this.logout()
+ },
+result=>{
+  alert(result.error.message)
+})
 
-}
+}}
 
 
-
+  
