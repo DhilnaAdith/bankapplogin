@@ -11,17 +11,26 @@ export class TransactionComponent implements OnInit {
 acno:any
 //to hold transaction array
 transaction:any
-
-  constructor(private ds:DataService) {
-    //get login acno from data server
-    this.acno = this.ds.currentAcno
-    //get transaction array from data service
-    this.transaction = this.ds.getTransaction(this.acno)
-    console.log(this.transaction);
-
+ constructor(private ds:DataService) {
+    //get login acno from local storage
+    this.acno = JSON.parse(localStorage.getItem('currentAcno') || '')
+    //get transaction array from data service - asynchronous
+    this.ds.getTransaction(this.acno)
+    .subscribe(
+      //200
+      (result:any)=>{
+        this.transaction = result.transaction
+      },
+    //400
+    result=>{
+      alert(result.error.message)
+    }
+    )
    }
 
   ngOnInit(): void {
   }
 
-}
+   }
+
+  
